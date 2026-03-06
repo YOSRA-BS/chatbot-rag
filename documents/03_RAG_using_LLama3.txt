@@ -1,0 +1,239 @@
+SOURCE: RAG (Retrieval-Augmented Generation) using LLama3 - GeeksforGeeks
+URL: https://www.geeksforgeeks.org/artificial-intelligence/rag-using-llama3/
+TOPIC: Building a RAG System with LLaMA 3 and Ollama
+
+================================================================================
+RAG (RETRIEVAL-AUGMENTED GENERATION) USING LLAMA 3
+================================================================================
+
+INTRODUCTION TO RAG
+--------------------
+Retrieval-Augmented Generation (RAG) combines the strengths of retrieval and
+generative models. It delivers detailed and accurate responses to user queries.
+
+RAG is an advanced AI framework that combines information retrieval with text
+generation models to produce more accurate and up-to-date responses. Instead of
+relying only on pre-trained data like traditional language models, RAG fetches
+relevant documents from an external knowledge source before generating an answer.
+
+When paired with LLaMA 3 (an advanced language model renowned for its understanding
+and scalability), RAG enables real-world projects that can answer questions from
+custom documents and databases with high accuracy.
+
+WHY RAG? - KEY ADVANTAGES
+---------------------------
+- Access to Updated Knowledge: LLMs are trained on fixed datasets but RAG allows
+  them to fetch fresh and real-time information from external sources
+- Improved Accuracy: Reduces hallucinations in LLMs and makes answers more
+  factually correct and grounded in actual documents
+- Domain Specific Expertise: Use specialized datasets like medical records and
+  legal documents to get expert-level responses without retraining the model
+- Cost Efficiency: Instead of retraining massive LLMs with new data, simply update
+  the external knowledge base, saving time and resources
+- Privacy: Sensitive documents never need to leave your infrastructure
+- Personalization: RAG can retrieve user-specific information like past interactions
+  or personal data to provide more tailored and relevant responses
+
+HOW RAG WORKS - STEP BY STEP
+------------------------------
+
+Step 1 - Document Ingestion:
+Load documents from various sources (PDFs, Word files, websites, databases).
+Split them into smaller, manageable chunks for efficient retrieval.
+
+Step 2 - Text Chunking and Preprocessing:
+Break large text into smaller chunks (typically 500-1000 characters).
+Clean and normalize text for consistency.
+Use RecursiveCharacterTextSplitter with chunk overlap to avoid losing context
+at chunk boundaries.
+
+Step 3 - Embedding Generation:
+Convert each text chunk into a numerical vector (embedding) using an embedding model.
+Similar texts produce similar vectors, enabling semantic search.
+Example embedding models: nomic-embed-text (Ollama), text-embedding-3-large (OpenAI),
+BGE, E5 models.
+
+Step 4 - Vector Store Storage:
+Store embeddings in a vector database for fast similarity search.
+Vector databases: ChromaDB, Qdrant, Weaviate, Pinecone, FAISS, PGVector.
+
+Step 5 - Query Processing:
+When a user asks a question, embed the question using the same embedding model.
+Search the vector store for the most similar document chunks (top-k results).
+
+Step 6 - Context Augmentation:
+Format the retrieved chunks into a context string.
+Combine the context with the user's question into an augmented prompt.
+
+Step 7 - Generation:
+Pass the augmented prompt to the LLM (LLaMA 3 in this case).
+The model generates an answer grounded in the retrieved documents.
+
+Step 8 - Response with Sources:
+Return the generated answer along with the source documents used,
+allowing users to verify the information.
+
+BUILDING A RAG SYSTEM WITH LLAMA 3 AND OLLAMA
+-----------------------------------------------
+This project builds a RAG system using:
+- LLaMA 3 via Ollama (runs locally on your machine)
+- ChromaDB as the vector store
+- OllamaEmbeddings for text embeddings
+- Gradio for the user interface
+- Tavily API for web search retrieval (real-time information)
+
+SETUP STEPS
+-----------
+
+Step 1 - Install Ollama:
+This downloads and installs Ollama on your system.
+curl -fsSL https://ollama.com/install.sh | sh
+(On Windows: Download from https://ollama.com)
+
+Step 2 - Pull LLaMA 3:
+ollama pull llama3
+ollama pull nomic-embed-text
+
+Step 3 - Start Ollama Server:
+This starts the Ollama server in the background.
+ollama serve
+
+Step 4 - Install Python Dependencies:
+pip install langchain langchain-community langchain-ollama chromadb gradio
+
+Step 5 - Tavily API (for web retrieval):
+Tavily is a web search API used to fetch real-time information from the internet.
+In this project, it is used for web scraping to provide fresh and relevant content.
+Sign up at tavily.com and copy your API key from the dashboard.
+
+CORE CODE - RAG CHAIN IMPLEMENTATION
+--------------------------------------
+
+Creating the Vector Store from web-retrieved content:
+def create_vectorstore(query):
+    tavily = TavilySearchResults(max_results=5)
+    search_results = tavily.invoke(query)
+    content = [r["content"] for r in search_results if "content" in r]
+    if not content:
+        return None, "No content retrieved"
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=50
+    )
+    chunks = text_splitter.create_documents(content)
+    embeddings = OllamaEmbeddings(model="nomic-embed-text")
+    vectorstore = Chroma.from_documents(chunks, embeddings)
+    return vectorstore, None
+
+The LLM Function using Ollama and LLaMA 3:
+def ollama_llm(question, context):
+    formatted_prompt = f"Question: {question}
+
+Context: {context}"
+    response = ollama.chat(
+        model="llama3",
+        messages=[{"role": "user", "content": formatted_prompt}]
+    )
+    return response["message"]["content"]
+
+The Core RAG Chain:
+def rag_chain(question):
+    vectorstore, error = create_vectorstore(question)
+    if error:
+        return error
+    retriever = vectorstore.as_retriever()
+    retrieved_docs = retriever.invoke(question)
+    formatted_context = "
+
+".join(doc.page_content for doc in retrieved_docs)
+    return ollama_llm(question, formatted_context)
+
+RAG SYSTEM COMPONENTS EXPLAINED
+---------------------------------
+
+External Knowledge Source:
+Stores domain-specific or general information like documents, APIs, or databases.
+This is the knowledge base your chatbot will answer questions from.
+
+Embedding Model:
+Converts text into numerical vectors that capture semantic meaning.
+OllamaEmbeddings uses local models (nomic-embed-text) to avoid external API calls.
+
+Vector Database (ChromaDB):
+Stores embeddings and enables similarity search for fast information retrieval.
+ChromaDB runs locally, making it ideal for privacy-sensitive applications.
+
+Query Encoder:
+Transforms the user query into a vector for comparison with stored embeddings.
+Uses the same embedding model that was used to embed the documents.
+
+Retriever:
+Finds and returns the most relevant chunks from the database based on query similarity.
+Configured with as_retriever() and optional search parameters like k (top results).
+
+Prompt Augmentation:
+Combines retrieved chunks with the user query to provide context to the LLM.
+The formatted prompt typically looks like:
+"Question: [user question]
+
+Context: [retrieved documents]"
+
+RAG VS FINE-TUNING - WHEN TO USE EACH
+----------------------------------------
+RAG is better when:
+- You need up-to-date information
+- Your knowledge base changes frequently
+- You want to cite sources
+- You have private documents
+- You want to avoid the cost of model retraining
+
+Fine-Tuning is better when:
+- You need the model to behave differently (tone, style, domain jargon)
+- Your task requires specific output formats
+- You need faster inference without retrieval overhead
+- Your knowledge is relatively static and well-defined
+
+ADVANCED RAG TECHNIQUES
+------------------------
+
+Hybrid Search:
+Combines dense vector search (semantic) with sparse keyword search (BM25).
+Better recall than pure vector search, especially for specific terms.
+
+Reranking:
+After initial retrieval, a cross-encoder reranks results by relevance.
+Tools: Cohere Rerank, BGE Reranker, FlashRank.
+Significantly improves answer quality.
+
+Self RAG:
+An advanced variant where the LLM decides when to retrieve, evaluates
+retrieved documents, and reflects on whether its answer is supported.
+Uses special reflection tokens to guide the retrieval and generation process.
+
+Naive RAG Limitations:
+- Low precision: misaligned retrieved chunks
+- Low recall: failure to retrieve all relevant chunks
+- Outdated information from stale knowledge bases
+- Hallucination even with retrieved context if context is irrelevant
+
+VECTOR DATABASE OPTIONS
+------------------------
+Database    | Type         | Best For
+------------|--------------|----------------------------------
+ChromaDB    | Local/Cloud  | Development, small-medium datasets
+Qdrant      | Self-hosted  | Production, high performance
+Weaviate    | Self-hosted  | Graph + vector hybrid search
+Pinecone    | Cloud only   | Managed, scalable cloud deployments
+FAISS       | Local library | Research, very large datasets
+PGVector    | PostgreSQL   | Existing PostgreSQL infrastructure
+
+KEY TAKEAWAYS
+--------------
+- RAG combines retrieval from a knowledge base with LLM generation
+- It reduces hallucination by grounding answers in real documents
+- Ollama enables running LLaMA 3 locally for privacy and cost efficiency
+- nomic-embed-text is a high-quality local embedding model for Ollama
+- ChromaDB is a simple, local vector store perfect for RAG projects
+- The RAG pipeline: Load docs, chunk, embed, store, retrieve, augment, generate
+- Advanced techniques: hybrid search, reranking, and Self-RAG improve quality
+- RAG is preferred over fine-tuning when knowledge changes frequently

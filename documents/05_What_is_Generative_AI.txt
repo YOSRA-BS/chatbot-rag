@@ -1,0 +1,189 @@
+SOURCE: What is Generative AI? - GeeksforGeeks
+URL: https://www.geeksforgeeks.org/artificial-intelligence/what-is-generative-ai/
+TOPIC: Definition, Examples, and Models of Generative AI
+
+================================================================================
+WHAT IS GENERATIVE AI?
+================================================================================
+
+DEFINITION
+-----------
+Generative AI is a type of artificial intelligence designed to create new content
+such as text, images, music, or code by learning patterns from existing data.
+These models generate original outputs that are often indistinguishable from
+human-created content.
+
+Generative AI is a branch of artificial intelligence that focuses on creating new
+content such as text, images, code, music, and video using models like transformers,
+GANs, and diffusion models. It is used in tools like ChatGPT, Claude, Gemini,
+and DALL-E, and is widely applied in automation, chatbots, and personalization.
+
+HOW GENERATIVE AI DIFFERS FROM DISCRIMINATIVE AI
+-------------------------------------------------
+Unlike discriminative AI which focuses on classifying data into categories
+(such as spam vs. not spam), generative AI creates new data such as text, images,
+audio, or video that resembles real-world examples.
+
+Discriminative AI: "Is this email spam or not spam?" (classification)
+Generative AI: "Write a professional email declining a meeting invitation." (creation)
+
+Generative AI is trained on large datasets like text, images, audio, or video
+using deep learning networks. During training, the model learns parameters
+(millions or billions of them) that help predict or generate content.
+
+HOW GENERATIVE AI WORKS
+------------------------
+
+1. Training Phase:
+The model is exposed to massive amounts of data and learns the statistical
+patterns within that data. For an LLM, it learns from billions of words from
+books, websites, and articles. For an image model, it learns from millions of
+labeled image-text pairs.
+
+2. Representation Learning:
+The model builds internal representations (embeddings) that capture the
+underlying structure and semantics of the training data. These representations
+allow the model to generalize to new inputs.
+
+3. Generation Phase:
+When given a prompt, the model uses its learned representations to generate
+new content that fits the patterns it has learned. An LLM generates text
+token by token; an image model generates a full image in latent space.
+
+TYPES OF GENERATIVE AI MODELS
+-------------------------------
+
+1. Autoregressive Transformer Models (LLMs):
+Generate sequences by predicting the next token based on all previous tokens,
+moving step by step through the text. The architecture relies on the transformer
+self-attention mechanism to capture context from the entire input so far.
+- Highly effective for natural language and code generation
+- Fine-grained control over each output step
+- Can be slower for long generations since tokens are generated one at a time
+- Popular examples: GPT-4, Claude 3, LLaMA 3, Mistral 7B, Gemini
+
+2. Diffusion Models:
+Generate data such as images or audio by starting with pure random noise and
+gradually refining it into a coherent output through a series of denoising steps.
+Each step reverses a simulated diffusion process that added noise during training.
+- State-of-the-art for image, audio, and video generation
+- High quality outputs but computationally expensive
+- Popular examples: Stable Diffusion, DALL-E 3, Midjourney, Adobe Firefly
+
+3. Generative Adversarial Networks (GANs):
+Use two competing neural networks:
+- Generator: Creates fake data trying to fool the discriminator
+- Discriminator: Tries to distinguish real data from generated data
+Training continues until the generator produces outputs indistinguishable from real data.
+- Introduced by Ian Goodfellow in 2014
+- Dominant for image generation until diffusion models emerged around 2022
+- Still used for specific applications like face generation and video synthesis
+
+4. Variational Autoencoders (VAEs):
+A variation of the Autoencoder that adds a probabilistic approach to the encoding
+process. VAEs compress data into a latent space and decode it back, enabling
+generation of new samples by sampling from that latent space.
+- Used for generating new data similar to the input
+- Commonly applied in image generation and creative tasks
+- The latent space allows smooth interpolation between different outputs
+
+5. Multimodal Models:
+Modern systems handle multiple types of input and output simultaneously:
+- GPT-4V: Analyzes images and generates text descriptions
+- Gemini Ultra: Handles text, images, and audio natively
+- Claude 3 Sonnet: Processes text and images in a single context
+- Sora (OpenAI): Generates temporally coherent video from text prompts
+
+KEY COMPONENTS OF MODERN GENERATIVE AI SYSTEMS
+------------------------------------------------
+
+Self-Supervised Learning:
+Most generative AI is trained using self-supervised learning, where the model
+learns from unlabeled data by predicting masked or missing parts of the input.
+This allows training on virtually unlimited data from the internet.
+
+RLHF (Reinforcement Learning from Human Feedback):
+After pre-training, models are aligned with human preferences using RLHF:
+1. Generate multiple outputs for many prompts
+2. Human raters compare and rank the outputs
+3. A reward model is trained to predict human preferences
+4. The LLM is fine-tuned to maximize the reward model score
+
+RAG (Retrieval-Augmented Generation):
+Modern systems also use RAG which enhances outputs by retrieving relevant documents
+at query time to ground the generation in accurate, up-to-date information.
+This reduces hallucinations and improves factuality without retraining the model.
+
+AI Agents:
+Modern systems use agents which are autonomous components that interact with
+the environment, obtain information, and execute chains of tasks. These agents
+use LLMs to reason, plan, and act, enabling workflows like querying databases,
+performing retrieval, or controlling external APIs.
+
+POPULAR GENERATIVE AI APPLICATIONS
+------------------------------------
+
+Text Generation:
+- ChatGPT (OpenAI): Conversational AI using GPT-3.5 and GPT-4
+- Claude (Anthropic): Assistant AI known for long context and safety
+- Gemini (Google): Multimodal AI integrated with Google services
+- Perplexity AI: AI-powered search engine with cited answers
+
+Image Generation:
+- DALL-E 3 (OpenAI): Generates images from text descriptions, integrated with ChatGPT
+- Midjourney: Creates artistic images via Discord, known for aesthetic quality
+- Stable Diffusion: Open-source image generator, runs locally, highly customizable
+- Adobe Firefly: Integrated into Creative Cloud, trained on licensed content
+
+Code Generation:
+- GitHub Copilot: AI pair programmer integrated into VS Code and other editors
+- Cursor: AI-first code editor with full codebase awareness
+- Amazon CodeWhisperer: AWS-integrated coding assistant
+- Tabnine: AI code completion tool for multiple IDEs
+
+Audio and Video:
+- ElevenLabs: Text-to-speech and voice cloning with high realism
+- Suno / Udio: Generate full songs from text descriptions
+- Runway: AI video generation and editing tools
+- Pika Labs: Text-to-video generation
+
+BENEFITS OF GENERATIVE AI
+---------------------------
+- Creativity at Scale: Generate unlimited variations of content
+- Cost Reduction: Automate content creation tasks previously requiring human labor
+- Personalization: Create tailored content for individual users
+- Accessibility: Make expert-level capabilities available to everyone
+- Speed: Generate in seconds what would take humans hours or days
+- Versatility: Apply the same model to dozens of different tasks
+
+RISKS AND LIMITATIONS OF GENERATIVE AI
+----------------------------------------
+- Hallucination: Generating confident but false information
+- Bias: Inheriting biases from training data
+- Misinformation: Easy creation of convincing fake content and deepfakes
+- Copyright Issues: Unclear ownership of AI-generated content
+- Environmental Cost: Enormous energy consumption for training large models
+- Privacy Risks: Training data may contain personal information
+- Prompt Injection: Malicious instructions embedded in content the AI processes
+- Job Displacement: Automation of tasks previously performed by humans
+
+GENERATIVE AI VS TRADITIONAL AI
+---------------------------------
+Aspect           | Traditional AI              | Generative AI
+-----------------|-----------------------------|--------------------------
+Primary Task     | Classification, prediction  | Content creation
+Output Type      | Label, score, decision      | Text, image, audio, video
+Training Data    | Labeled datasets            | Massive unlabeled corpora
+Key Technique    | Supervised learning         | Self-supervised learning
+Example Task     | Email spam detection        | Writing a full email
+Model Size       | Thousands to millions params| Billions to trillions params
+
+KEY TAKEAWAYS
+--------------
+- Generative AI creates new content by learning patterns from existing data
+- It differs from discriminative AI which classifies rather than generates
+- Main model types: LLMs (text), Diffusion Models (images), GANs, VAEs
+- Modern systems combine generation with RAG, agents, and RLHF alignment
+- Popular tools: ChatGPT, Claude, Gemini, DALL-E, Stable Diffusion, GitHub Copilot
+- Key risks: hallucination, bias, misinformation, copyright, and energy cost
+- Generative AI is transforming every industry from healthcare to creative arts

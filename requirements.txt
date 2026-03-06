@@ -1,0 +1,30 @@
+# ── PDF Generation (pdfgenerater.py) ────────────────────────────────────────
+groq               # Groq API client — GRATUIT, très rapide, modèles puissants
+reportlab          # Creates and styles PDF files from generated text
+
+# ── Web interface (chatbot.py) ────────────────────────────────────────────────
+streamlit
+
+# ── LangChain core + integrations (ingest.py + chatbot.py) ───────────────────
+langchain
+langchain-core
+langchain-community
+langchain-ollama
+langchain-text-splitters
+langchain-classic  # ConversationalRetrievalChain + ConversationBufferMemory
+
+# ── Local LLM via Ollama ──────────────────────────────────────────────────────
+# Ollama itself is installed separately from https://ollama.com
+# This package is the Python client used by langchain-ollama
+ollama
+
+# ── Embeddings (HuggingFace, fully local) ─────────────────────────────────────
+sentence-transformers   # all-MiniLM-L6-v2 embedding model
+
+# ── Vector database ───────────────────────────────────────────────────────────
+faiss-cpu          # local vector index (no server needed)
+
+# ── Document loaders ──────────────────────────────────────────────────────────
+pypdf              # read PDF files page by page
+python-docx        # .docx support
+docx2txt           # .docx text extraction (used by Docx2txtLoader)

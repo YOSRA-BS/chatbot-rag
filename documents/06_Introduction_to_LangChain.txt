@@ -1,0 +1,278 @@
+SOURCE: Introduction to LangChain - GeeksforGeeks
+URL: https://www.geeksforgeeks.org/artificial-intelligence/introduction-to-langchain/
+TOPIC: LangChain Framework for Building LLM-Powered Applications
+
+================================================================================
+INTRODUCTION TO LANGCHAIN
+================================================================================
+
+WHAT IS LANGCHAIN?
+-------------------
+LangChain is an open-source framework designed to simplify the creation of
+applications using large language models (LLMs). It provides a standard interface
+for integrating with other tools and end-to-end chains for common applications.
+It helps AI developers connect LLMs such as GPT-4 with external data and computation.
+
+This framework is available for both Python and JavaScript/TypeScript.
+LangChain simplifies the integration of language models like GPT into real-world
+applications allowing you to build systems more efficiently. It is a framework for
+easily integrating language models into applications and streamlines tasks like
+data ingestion, text processing, and interacting with models.
+
+WHY USE LANGCHAIN?
+-------------------
+Key benefits of LangChain:
+- Modular Workflow: Simplifies chaining LLMs together for reusable and efficient workflows
+- Prompt Management: Offers tools for effective prompt engineering and memory handling
+- Ease of Integration: Streamlines the process of building LLM-powered applications
+- Tool Integration: Easily connect LLMs to databases, APIs, and external services
+- Memory: Built-in conversation memory for stateful chatbot applications
+- Agents: Framework for building autonomous AI agents that use tools
+- RAG Support: First-class support for building retrieval-augmented generation pipelines
+
+CORE COMPONENTS OF LANGCHAIN
+------------------------------
+
+1. CHAINS
+---------
+Chains define sequences of actions where each step can involve querying an LLM,
+manipulating data, or interacting with external tools.
+
+Two types of chains:
+a) Simple Chains: A single LLM invocation
+   Example: User question -> LLM -> Answer
+
+b) Multi-step Chains: Multiple LLMs or actions combined, where each step can
+   take the output from the previous step.
+   Example: User question -> Retrieve documents -> LLM with context -> Answer
+
+LangGraph extends chains to support complex graph-based workflows with cycles,
+which is important for agentic AI systems that need to iterate or backtrack.
+
+2. PROMPT TEMPLATES
+-------------------
+LangChain provides tools for creating and managing prompt templates:
+from langchain.prompts import PromptTemplate
+
+template = PromptTemplate(
+    input_variables=["question", "context"],
+    template="Answer the question based on the context.
+Context: {context}
+Question: {question}
+Answer:"
+)
+
+Prompt templates allow you to:
+- Reuse prompts across different inputs
+- Separate prompt logic from application code
+- Version and manage prompts systematically
+- Inject variables dynamically into prompts
+
+3. DOCUMENT LOADERS
+-------------------
+LangChain provides loaders for many document types:
+from langchain_community.document_loaders import PyPDFLoader, Docx2txtLoader, TextLoader
+
+- PyPDFLoader: Load PDF files page by page
+- Docx2txtLoader: Load Word documents
+- TextLoader: Load plain text files
+- WebBaseLoader: Scrape and load web pages
+- CSVLoader: Load CSV data files
+- UnstructuredLoader: Handle many file types automatically
+
+4. TEXT SPLITTERS
+-----------------
+Split large documents into smaller chunks for embedding and retrieval:
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+splitter = RecursiveCharacterTextSplitter(
+    chunk_size=500,
+    chunk_overlap=50
+)
+chunks = splitter.split_documents(documents)
+
+RecursiveCharacterTextSplitter is the recommended default because it:
+- Tries to split on natural boundaries (paragraphs, sentences, words)
+- Falls back to character splitting only when necessary
+- Preserves semantic coherence within chunks
+
+5. EMBEDDINGS
+-------------
+Convert text into numerical vectors for semantic search:
+from langchain_ollama import OllamaEmbeddings
+from langchain_openai import OpenAIEmbeddings
+
+# Using Ollama (local, free):
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+
+# Using OpenAI (API, paid):
+embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+
+6. VECTOR STORES
+----------------
+Store and retrieve embeddings efficiently:
+from langchain_community.vectorstores import Chroma, FAISS
+from langchain_qdrant import QdrantVectorStore
+
+# Create vector store from documents:
+vectorstore = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./vectorstore"
+)
+
+# Load existing vector store:
+vectorstore = Chroma(
+    persist_directory="./vectorstore",
+    embedding_function=embeddings
+)
+
+# Search for similar documents:
+results = vectorstore.similarity_search("What is RAG?", k=4)
+
+7. RETRIEVERS
+-------------
+Retrievers search the vector store for relevant documents:
+retriever = vectorstore.as_retriever(
+    search_kwargs={"k": 4}
+)
+
+Advanced retriever types:
+- MultiQueryRetriever: Generates multiple query variations for better recall
+- ContextualCompressionRetriever: Compresses retrieved documents for relevance
+- EnsembleRetriever: Combines multiple retrievers (hybrid search)
+- SelfQueryRetriever: Translates natural language into structured queries
+
+8. MEMORY
+---------
+LangChain provides conversation memory for chatbot applications:
+from langchain.memory import ConversationBufferMemory
+
+memory = ConversationBufferMemory(
+    memory_key="chat_history",
+    return_messages=True
+)
+
+Memory types:
+- ConversationBufferMemory: Stores full conversation history
+- ConversationSummaryMemory: Summarizes old messages to save context space
+- ConversationBufferWindowMemory: Keeps only last k interactions
+
+9. LLM INTEGRATIONS
+--------------------
+LangChain works with many LLM providers:
+
+Ollama (local LLMs):
+from langchain_ollama import ChatOllama
+llm = ChatOllama(model="llama3.2", temperature=0.1)
+
+OpenAI:
+from langchain_openai import ChatOpenAI
+llm = ChatOpenAI(model="gpt-4o", temperature=0.1)
+
+Anthropic Claude:
+from langchain_anthropic import ChatAnthropic
+llm = ChatAnthropic(model="claude-3-sonnet-20240229")
+
+HuggingFace:
+from langchain_huggingface import HuggingFaceEndpoint
+llm = HuggingFaceEndpoint(repo_id="mistralai/Mistral-7B-Instruct-v0.1")
+
+10. AGENTS AND TOOLS
+--------------------
+LangChain agents use LLMs to decide which tools to use and in what order.
+An agent can search the web, run Python code, query a database, or call an API.
+
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain_community.tools import DuckDuckGoSearchRun
+
+tools = [DuckDuckGoSearchRun()]
+agent = create_tool_calling_agent(llm, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools)
+
+HOW RAG WORKS WITH LANGCHAIN
+------------------------------
+This is the core workflow for building a RAG chatbot with LangChain:
+
+Step 1 - Load documents:
+loader = PyPDFLoader("document.pdf")
+documents = loader.load()
+
+Step 2 - Split into chunks:
+splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+chunks = splitter.split_documents(documents)
+
+Step 3 - Create embeddings and store in vector DB:
+embeddings = OllamaEmbeddings(model="nomic-embed-text")
+vectorstore = Chroma.from_documents(chunks, embeddings, persist_directory="./db")
+
+Step 4 - Create retriever:
+retriever = vectorstore.as_retriever(search_kwargs={"k": 4})
+
+Step 5 - Create LLM and memory:
+llm = ChatOllama(model="llama3.2", temperature=0.1)
+memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
+Step 6 - Build conversational RAG chain:
+from langchain.chains import ConversationalRetrievalChain
+chain = ConversationalRetrievalChain.from_llm(
+    llm=llm,
+    retriever=retriever,
+    memory=memory,
+    return_source_documents=True
+)
+
+Step 7 - Ask questions:
+result = chain.invoke({"question": "What is the main topic of the document?"})
+print(result["answer"])
+print(result["source_documents"])
+
+HOW THE RETRIEVAL PIPELINE WORKS
+----------------------------------
+The retrieved information is passed to the language model. The LLM processes the
+input and generates a response or takes an action based on the provided data.
+
+For example, if the query is about the weather, the LLM might generate a response
+using information retrieved from a weather database. The formatted response is
+returned to the user as the final output - a clear, accurate and contextually
+relevant answer to the query.
+
+LANGCHAIN VS OTHER FRAMEWORKS
+-------------------------------
+Framework     | Strength                          | Best For
+--------------|-----------------------------------|-----------------------
+LangChain     | Extensive integrations, chains    | General LLM apps, RAG
+LlamaIndex    | Data indexing, RAG optimization   | Complex RAG pipelines
+Haystack      | Production NLP pipelines          | Enterprise search apps
+CrewAI        | Multi-agent coordination          | Collaborative AI teams
+AutoGen       | Multi-agent conversations         | Research, complex tasks
+
+INSTALLING LANGCHAIN
+---------------------
+pip install langchain                  # Core framework
+pip install langchain-community        # Community integrations (loaders, vector stores)
+pip install langchain-ollama           # Ollama LLM and embeddings
+pip install langchain-openai           # OpenAI LLM and embeddings
+pip install langchain-anthropic        # Anthropic Claude integration
+pip install langchain-huggingface      # HuggingFace model integration
+pip install langsmith                  # Observability and tracing
+
+LANGSMITH - OBSERVABILITY FOR LANGCHAIN
+-----------------------------------------
+LangSmith is an observability platform for LangChain applications:
+- Traces every LLM call and retrieval step
+- Shows prompt inputs and model outputs
+- Measures latency and token usage
+- Enables debugging of complex chain behavior
+- Supports A/B testing of prompts and models
+
+KEY TAKEAWAYS
+--------------
+- LangChain simplifies building applications that use LLMs and external data
+- Core components: Chains, Prompts, Loaders, Splitters, Embeddings, Vector Stores
+- RAG pipeline in LangChain: Load -> Split -> Embed -> Store -> Retrieve -> Generate
+- LangChain works with Ollama (local), OpenAI, Anthropic Claude, and HuggingFace
+- Memory components enable stateful conversations that remember previous messages
+- Agents extend LLMs with tool use: web search, code execution, API calls
+- LangSmith provides tracing and observability for production LangChain apps
+- LangGraph enables complex graph-based workflows for advanced agentic systems

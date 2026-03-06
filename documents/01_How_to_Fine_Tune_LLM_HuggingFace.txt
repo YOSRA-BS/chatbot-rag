@@ -1,0 +1,184 @@
+SOURCE: How to Fine-Tune an LLM from Hugging Face - GeeksforGeeks
+URL: https://www.geeksforgeeks.org/deep-learning/how-to-fine-tune-an-llm-from-hugging-face/
+TOPIC: Fine-Tuning Large Language Models with Hugging Face
+
+================================================================================
+HOW TO FINE-TUNE AN LLM FROM HUGGING FACE
+================================================================================
+
+INTRODUCTION
+------------
+Large Language Models (LLMs) have transformed natural language processing (NLP)
+tasks such as translation, summarization, and text generation. Hugging Face's
+Transformers library offers pre-trained models that can be customized for specific
+purposes through fine-tuning.
+
+Fine-tuning refers to taking a pre-trained model and adapting it to a specific task
+by training it further on a smaller, domain-specific dataset. It refines the model
+capabilities and improves accuracy in specialized tasks without needing a massive
+dataset or expensive computational resources.
+
+GOALS OF FINE-TUNING
+--------------------
+- Steer the model towards performing optimally on particular tasks
+- Ensure model outputs align with expected results for real-world applications
+- Reduce model hallucinations and improve output relevance and honesty
+
+WHEN TO FINE-TUNE AN LLM
+--------------------------
+Fine-tuning is particularly valuable when you need to:
+- Consistently improve performance on a specific set of tasks
+- Control the style and format of model outputs (e.g., company tone of voice)
+- Teach the model domain-specific knowledge or terminology
+Before fine-tuning, always evaluate if prompt engineering or existing fine-tuned
+models can solve the problem first.
+
+TYPES OF FINE-TUNING METHODS
+-----------------------------
+
+1. Supervised Fine-Tuning (SFT):
+Further trains a pre-trained model on a task-specific labeled dataset of
+input-output pairs. Updates all model weights to adapt it to the new task.
+Best for tasks like sentiment analysis and text classification.
+
+2. Instruction Fine-Tuning:
+Trains the model using datasets pairing instructions (prompts) with expected
+responses. Helps the model follow natural language instructions.
+Commonly used in chatbots, question answering, and open-ended tasks.
+
+3. Parameter-Efficient Fine-Tuning (PEFT):
+Adjusts only a small subset of parameters, keeping most of the model unchanged.
+Methods include LoRA (Low-Rank Adaptation) and adapter layers.
+PEFT can reduce trainable parameters from billions to just millions.
+
+4. Reinforcement Learning with Human Feedback (RLHF):
+Uses human ratings to teach a model to align outputs with human preferences.
+Three steps: generate outputs, train a reward model from human feedback, and
+optimize model behavior using reinforcement learning (PPO algorithm).
+Used in ChatGPT and Claude for alignment with human values.
+
+STEP-BY-STEP FINE-TUNING PROCESS
+----------------------------------
+
+STEP 1 - SELECT A BASE MODEL
+Choose a pre-trained model based on your task and compute budget:
+- GPT models: text generation
+- BERT / DistilBERT: text classification, question answering
+- T5 / Flan-T5: summarization, translation, question answering
+- LLaMA / Mistral: general-purpose large language models
+
+STEP 2 - INSTALL REQUIRED LIBRARIES
+pip install datasets transformers evaluate accelerate peft trl bitsandbytes
+
+STEP 3 - PREPARE THE DATASET
+Tokenize and format the dataset to align with the model input requirements.
+Hugging Face's datasets library makes it simple to load and prepare datasets.
+
+STEP 4 - LOAD THE PRETRAINED MODEL AND TOKENIZER
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+model = AutoModelForSequenceClassification.from_pretrained("distilbert-base-uncased")
+
+STEP 5 - CONFIGURE TRAINING ARGUMENTS
+from transformers import TrainingArguments
+training_args = TrainingArguments(
+    output_dir="./results",
+    num_train_epochs=3,
+    per_device_train_batch_size=16,
+    eval_strategy="epoch",
+    learning_rate=2e-5
+)
+
+STEP 6 - TRAIN WITH HUGGING FACE TRAINER
+from transformers import Trainer
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=train_dataset,
+    eval_dataset=eval_dataset
+)
+trainer.train()
+
+STEP 7 - EVALUATE AND SAVE
+trainer.evaluate()
+trainer.save_model("./my-fine-tuned-model")
+tokenizer.save_pretrained("./my-fine-tuned-model")
+
+FINE-TUNING WITH LORA (PARAMETER-EFFICIENT)
+--------------------------------------------
+LoRA (Low-Rank Adaptation):
+- Adds small trainable low-rank matrices to the frozen pre-trained model
+- Reduces trainable parameters by up to 99%
+- Works on consumer GPUs (RTX 3090/4090 with 24GB VRAM) for 7B parameter models
+
+QLoRA (Quantized LoRA):
+- Combines 4-bit quantization with LoRA
+- Enables fine-tuning of 65B+ parameter models on a single consumer GPU
+- Reduces memory footprint without significantly sacrificing performance
+
+Example LoRA configuration with PEFT library:
+from peft import LoraConfig, get_peft_model
+lora_config = LoraConfig(
+    r=16,
+    lora_alpha=32,
+    target_modules=["q_proj", "v_proj"],
+    lora_dropout=0.05,
+    bias="none",
+    task_type="CAUSAL_LM"
+)
+peft_model = get_peft_model(model, lora_config)
+
+PRACTICAL EXAMPLE: FLAN-T5 WITH PEFT LORA
+------------------------------------------
+Dataset: DialogSum - 13,460 dialogues with manually labeled summaries
+Model: Flan-T5 base (instruction fine-tuned version of T5 by Google)
+Method: PEFT LoRA for dialogue summarization task
+
+Key steps:
+1. Install: datasets, transformers, evaluate, accelerate, peft
+2. Load flan-t5-base model and its tokenizer
+3. Load and preprocess the DialogSum dataset
+4. Configure LoRA parameters (r=8, lora_alpha=32)
+5. Create PEFT-enabled model
+6. Train with Hugging Face Trainer API
+7. Save and evaluate model on test set
+
+GPU REQUIREMENTS FOR FINE-TUNING
+---------------------------------
+Method                     | GPU Requirement
+---------------------------|-----------------------------------
+Full fine-tuning (7B)      | Multiple A100s (80GB each)
+LoRA fine-tuning (7B)      | Single RTX 4090 (24GB VRAM)
+QLoRA fine-tuning (13B)    | Single GPU with 24GB VRAM
+QLoRA fine-tuning (70B)    | Approximately 48GB VRAM
+
+MODEL SELECTION BY TASK
+------------------------
+Task                 | Recommended Model
+---------------------|-------------------------------
+Text Generation      | GPT, LLaMA, Mistral
+Text Classification  | BERT, DistilBERT, RoBERTa
+Summarization        | T5, Flan-T5, BART
+Translation          | Helsinki-NLP models, mBART
+Question Answering   | BERT, DeBERTa
+Code Generation      | CodeLlama, StarCoder, DeepSeek-Coder
+Dialogue/Chatbot     | LLaMA-chat, Mistral-Instruct
+
+SHARING YOUR MODEL ON HUGGING FACE HUB
+----------------------------------------
+After fine-tuning, push your model to the Hub to share and reuse it:
+from huggingface_hub import login
+login(token="your_hf_token")
+model.push_to_hub("your-username/your-model-name")
+tokenizer.push_to_hub("your-username/your-model-name")
+
+The Hugging Face Hub hosts over 500,000 models and is often called the GitHub of AI.
+
+KEY TAKEAWAYS
+--------------
+- Fine-tuning adapts a pre-trained LLM to specific tasks using a smaller dataset
+- PEFT methods (LoRA, QLoRA) make fine-tuning accessible on consumer hardware
+- Hugging Face Trainer API simplifies the entire training loop significantly
+- Always evaluate on a held-out validation set to detect overfitting
+- RLHF aligns models with human preferences, used in ChatGPT and Claude
+- Push your fine-tuned model to Hugging Face Hub for reuse and collaboration
