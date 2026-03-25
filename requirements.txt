@@ -1,30 +1,54 @@
-# ── PDF Generation (pdfgenerater.py) ────────────────────────────────────────
-groq               # Groq API client — GRATUIT, très rapide, modèles puissants
-reportlab          # Creates and styles PDF files from generated text
-
-# ── Web interface (chatbot.py) ────────────────────────────────────────────────
-streamlit
-
-# ── LangChain core + integrations (ingest.py + chatbot.py) ───────────────────
-langchain
-langchain-core
-langchain-community
-langchain-ollama
-langchain-text-splitters
-langchain-classic  # ConversationalRetrievalChain + ConversationBufferMemory
-
-# ── Local LLM via Ollama ──────────────────────────────────────────────────────
-# Ollama itself is installed separately from https://ollama.com
-# This package is the Python client used by langchain-ollama
-ollama
-
-# ── Embeddings (HuggingFace, fully local) ─────────────────────────────────────
-sentence-transformers   # all-MiniLM-L6-v2 embedding model
-
+# =============================================================================
+# requirements.txt — versions alignées et compatibles
+# Install order matters! Run:
+#   pip install -r requirements.txt
+# =============================================================================
+ 
+# ── NumPy (DOIT être installé EN PREMIER avant torch) ────────────────────────
+numpy<2                         # torch 2.2.x est incompatible avec numpy 2.x
+ 
+# ── PyTorch CPU (DOIT être installé EN DEUXIÈME) ─────────────────────────────
+# Installer séparément avec la commande suivante :
+# pip install torch==2.2.2 --index-url https://download.pytorch.org/whl/cpu
+torch==2.2.2                    # version stable, compatible numpy<2
+ 
+# ── Embeddings (HuggingFace, fully local) ────────────────────────────────────
+sentence-transformers==2.7.0    # compatible avec torch==2.2.2
+                                # modèle : paraphrase-multilingual-MiniLM-L12-v2
+ 
+# ── Web interface ─────────────────────────────────────────────────────────────
+streamlit==1.32.0               # interface chatbot stable
+ 
+# ── LangChain core + integrations ────────────────────────────────────────────
+langchain==0.1.20
+langchain-core==0.1.52
+langchain-community==0.0.38
+langchain-ollama==0.1.1
+langchain-text-splitters==0.0.2
+ 
+# ── ConversationalRetrievalChain + ConversationBufferMemory ──────────────────
+langchain-classic               # fournit les chaînes conversationnelles legacy
+ 
+# ── Local LLM via Ollama ─────────────────────────────────────────────────────
+ollama                          # client Python pour Ollama
+ 
 # ── Vector database ───────────────────────────────────────────────────────────
-faiss-cpu          # local vector index (no server needed)
-
-# ── Document loaders ──────────────────────────────────────────────────────────
-pypdf              # read PDF files page by page
-python-docx        # .docx support
-docx2txt           # .docx text extraction (used by Docx2txtLoader)
+faiss-cpu                       # index vectoriel local, pas de serveur requis
+ 
+# ── Document loaders ─────────────────────────────────────────────────────────
+pypdf                           # lecture PDF page par page
+python-docx                     # support fichiers .docx
+docx2txt                        # extraction texte .docx (Docx2txtLoader)
+ 
+# ── PDF Generation ───────────────────────────────────────────────────────────
+groq                            # Groq API client, gratuit et rapide
+reportlab                       # création et style de fichiers PDF
+ 
+# ── Utilitaires ──────────────────────────────────────────────────────────────
+python-dotenv                   # chargement des variables .env
+ 
+# ── LLMOps : évaluation et tracking ─────────────────────────────────────────
+datasets==2.18.0                # requis par ragas
+ragas==0.1.21                   # évaluation RAG (faithfulness, relevancy...)
+mlflow==2.11.3                  # tracking expériences et métriques
+pandas                          # manipulation des résultats d'évaluation

@@ -1,0 +1,81 @@
+question_originale,question_anglais,reponse_rag,ground_truth
+What is the Transformer architecture and why was it introduced?,What is the Transformer architecture and why was it introduced?,"The Transformer architecture is a type of neural network architecture that was introduced in 2017 by Vaswani et al. in their paper ""Attention Is All You Need"". It was designed to be more parallelizable and efficient than traditional recurrent neural networks (RNNs), making it well-suited for tasks such as machine translation, text summarization, and question answering.
+
+According to guide.pdf, the Transformer architecture is particularly useful for sequence-to-sequence tasks because it can attend to different parts of the input sequence simultaneously, allowing for more accurate modeling of long-range dependencies.
+
+The key innovation of the Transformer architecture is its use of self-attention mechanisms, which allow the model to weigh the importance of different input elements relative to each other. This is in contrast to traditional RNNs, which process input sequences sequentially and rely on recurrent connections to capture context.
+
+In addition to its technical advantages, the Transformer architecture was also introduced as a way to improve the performance of machine translation models. By allowing the model to attend to all positions in the input sequence simultaneously, the Transformer architecture can capture more nuanced relationships between words and their surrounding context.
+
+According to Transformer Architecture, the Transformer uses positional encoding to incorporate information about the position of each token in the input sequence. This is necessary because the self-attention mechanism is permutation-invariant, meaning that it does not take into account the order of the input tokens.
+
+The Transformer architecture has been widely adopted since its introduction and has become a standard component of many state-of-the-art machine learning models.","The Transformer architecture was introduced in the 2017 paper 'Attention Is All You Need' by Vaswani et al. It was created to address the limitations of RNNs and LSTMs, specifically their sequential processing nature and the vanishing gradient problem. It uses self-attention mechanisms to process sequences in parallel, making it faster and more efficient."
+How does the self-attention mechanism work in the Transformer?,How does the self-attention mechanism work in the Transformer?,"The self-attention mechanism is the core component of the Transformer architecture. It allows the model to attend to different parts of the input sequence simultaneously and weigh their importance.
+
+Here's a step-by-step explanation of how it works:
+
+* The self-attention mechanism consists of three main components: Query (Q), Key (K), and Value (V) projections.
+* These projections are used to compute the attention weights, which are then used to compute the weighted sum of the value projections.
+* The attention weights are computed using the dot product of the query and key vectors, divided by the square root of the dimensionality of the vector space.
+
+Mathematically, this can be represented as:
+
+Attention = (Q * K^T) / sqrt(d)
+
+where Q is the query vector, K is the key vector, and d is the dimensionality of the vector space.
+
+* The attention weights are then used to compute the weighted sum of the value projections. This is done by multiplying the attention weights with the value vectors.
+
+Weighted Sum = Attention * V
+
+* The output of each layer is computed by applying a residual connection around each sub-layer, followed by Layer Normalization.
+* The self-attention mechanism allows the model to look at all words in a sentence simultaneously and learn which words are most relevant to each other. For example, in the sentence 'The trophy didn't fit in the suitcase because it was too big', self-attention helps the model understand that 'it' refers to 'trophy', not 'suitcase'.
+
+According to guide.pdf, the key innovation of the Transformer is the self-attention mechanism. It enables the model to attend to different parts of the input sequence simultaneously and weigh their importance, which is particularly useful for tasks such as text classification, sentiment analysis, and question answering.
+
+In addition to the self-attention mechanism, the Transformer also uses a sinusoidal encoding scheme to incorporate information about the position of each token in the input sequence. This is necessary because the self-attention mechanism is permutation-invariant, meaning that it does not take into account the order of the input tokens.","The self-attention mechanism uses three components: Query (Q), Key (K), and Value (V) projections. It computes attention weights using the scaled dot-product formula: Attention(Q, K, V) = softmax(Q * K^T / sqrt(d_k)) * V. The scaling factor sqrt(d_k) prevents the dot product from growing too large."
+What is positional encoding and why is it needed in Transformers?,What is positional encoding and why is it needed in Transformers?,"Positional encoding is a technique used in the Transformer architecture to incorporate information about the position of each token in the input sequence. This is necessary because the self-attention mechanism is permutation-invariant, meaning that it does not take into account the order of the input tokens.
+
+According to guide.pdf, positional encoding is added to the input embeddings at the beginning of the encoder and decoder to capture positional relationships between tokens. The Transformer uses a sinusoidal encoding scheme, which maps each position to a vector of fixed size.
+
+The sinusoidal encoding scheme is defined as follows:
+
+* PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
+* PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
+
+where pos is the position of the token, i is the dimensionality of the encoding, and d_model is the dimensionality of the model.
+
+This scheme has the property that it can be computed efficiently and has a fixed size, making it well-suited for use in the Transformer architecture. Other positional encoding schemes, such as learned positional embeddings, have also been proposed.
+
+In summary, positional encoding is needed in Transformers to capture the order of tokens in the input sequence, which is not taken into account by the self-attention mechanism. The sinusoidal encoding scheme is a widely used technique for this purpose.","Positional encoding is needed because the self-attention mechanism is permutation-invariant and does not understand token order. The Transformer uses a sinusoidal encoding scheme: PE(pos, 2i) = sin(pos / 10000^(2i/d_model)) and PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model)). It is added to input embeddings at the beginning of encoder and decoder."
+What is RAG and what problems does it solve?,What is RAG and what problems does it solve?,"RAG (Retrieval-Augmented Generation) systems are a type of artificial intelligence (AI) model that combines the strengths of retrieval-based and generation-based approaches to answer complex questions. According to guide.pdf, the primary motivation behind RAG is to address three core LLM (Large Language Model) failure modes: hallucination, knowledge cutoff, and context limits.
+
+Hallucination occurs when a model generates information that is not based on any actual knowledge or context. Knowledge cutoff refers to the limitations of a model's training data, which can lead to outdated or incomplete information. Context limits, on the other hand, refer to the model's inability to understand the context of a question or prompt.
+
+RAG systems aim to improve upon these limitations by using retrieval-based approaches to fetch relevant context and generation-based approaches to produce accurate and informative responses.
+
+In addition to addressing the mentioned failure modes, RAG also improves the accuracy and relevance of responses by leveraging external knowledge sources. When paired with LLaMA 3 (an advanced language model), RAG enables real-world projects that can answer questions from custom documents and databases with high accuracy.
+
+Some key benefits of RAG include:
+
+* Improved faithfulness: RAG's retrieval-based approach helps to ensure that responses are grounded in the retrieved context.
+* Increased answer relevancy: By fetching relevant context, RAG models can produce more relevant and accurate responses.
+* Enhanced autonomy: RAG systems use agents, which are autonomous components that interact with the environment, obtain information, and execute chains of tasks.
+
+However, RAG also has some potential drawbacks, including:
+
+* Computational expense: Self-RAG, in particular, may be computationally expensive due to the additional processing required for retrieval.
+* Dependence on external knowledge sources: RAG's effectiveness relies on access to high-quality external knowledge sources, which can be a limitation.
+
+Overall, RAG systems offer a promising approach to addressing the limitations of traditional LLMs and improving the accuracy and relevance of responses.","RAG (Retrieval-Augmented Generation) is a technique that combines information retrieval with text generation. It was introduced in the 2020 Lewis et al. paper from Facebook AI. It solves three core LLM failure modes: hallucination (generating false information), knowledge cutoff (outdated training data), and context limits (inability to process large amounts of information)."
+What are the two main pipelines in a RAG system architecture?,What are the two main pipelines in a RAG system architecture?,"According to guide.pdf, the two main pipelines in a RAG system architecture are:
+
+* Offline Indexing Pipeline
+* Online Query Pipeline
+
+The Offline Indexing Pipeline is responsible for creating an index of the corpus of text that the model will retrieve from. This pipeline consists of the following steps:
+• Document collection: The first step is to collect a large corpus of text documents.
+
+The Online Query Pipeline, on the other hand, is responsible for retrieving relevant context and generating responses based on the query. However, the specific steps of this pipeline are not explicitly mentioned in the provided context documents.
+
+From my general knowledge, I can add that the Online Query Pipeline typically involves using a retriever model to search for relevant documents in the index created by the Offline Indexing Pipeline, and then using a generator model to generate a response based on the retrieved context.","The two main pipelines are: (1) The Offline Indexing Pipeline, which handles document collection, text extraction and cleaning, chunking, embedding generation, and vector database indexing. (2) The Online Query Pipeline, which handles query encoding, similarity search, optional reranking, prompt construction with context, and LLM generation with source grounding."

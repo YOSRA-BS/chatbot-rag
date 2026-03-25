@@ -54,10 +54,7 @@ def split_documents(documents: List[Document]) -> List[Document]:
         chunk_overlap=CHUNK_OVERLAP,
         # These separators are tried in order; falls back to the next if a chunk
         # is still too large.
-        separators=["
-
-", "
-", ". ", "! ", "? ", " ", ""],
+        separators=["\n\n", "\n", ". ", "! ", "? ", " ", ""],
     )
 
     chunks = splitter.split_documents(documents)
@@ -90,8 +87,7 @@ def build_vectorstore(chunks: List[Document]) -> FAISS: #--> signature de la fon
     Path(VECTORSTORE_PATH).mkdir(parents=True, exist_ok=True)
     vectorstore.save_local(VECTORSTORE_PATH)
 
-    print(f"[embeddings] Vector store saved to '{VECTORSTORE_PATH}/' ✓
-")
+    print(f"[embeddings] Vector store saved to '{VECTORSTORE_PATH}/' ✓")
     return vectorstore
 
 

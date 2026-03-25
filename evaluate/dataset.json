@@ -1,0 +1,23 @@
+[
+  {
+    "question": "What is the Transformer architecture and why was it introduced?",
+    "ground_truth": "The Transformer architecture was introduced in the 2017 paper 'Attention Is All You Need' by Vaswani et al. It was created to address the limitations of RNNs and LSTMs, specifically their sequential processing nature and the vanishing gradient problem. It uses self-attention mechanisms to process sequences in parallel, making it faster and more efficient."
+  },
+  {
+    "question": "How does the self-attention mechanism work in the Transformer?",
+    "ground_truth": "The self-attention mechanism uses three components: Query (Q), Key (K), and Value (V) projections. It computes attention weights using the scaled dot-product formula: Attention(Q, K, V) = softmax(Q * K^T / sqrt(d_k)) * V. The scaling factor sqrt(d_k) prevents the dot product from growing too large."
+  },
+  {
+    "question": "What is positional encoding and why is it needed in Transformers?",
+    "ground_truth": "Positional encoding is needed because the self-attention mechanism is permutation-invariant and does not understand token order. The Transformer uses a sinusoidal encoding scheme: PE(pos, 2i) = sin(pos / 10000^(2i/d_model)) and PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model)). It is added to input embeddings at the beginning of encoder and decoder."
+  },
+  {
+    "question": "What is RAG and what problems does it solve?",
+    "ground_truth": "RAG (Retrieval-Augmented Generation) is a technique that combines information retrieval with text generation. It was introduced in the 2020 Lewis et al. paper from Facebook AI. It solves three core LLM failure modes: hallucination (generating false information), knowledge cutoff (outdated training data), and context limits (inability to process large amounts of information)."
+  },
+  {
+    "question": "What are the two main pipelines in a RAG system architecture?",
+    "ground_truth": "The two main pipelines are: (1) The Offline Indexing Pipeline, which handles document collection, text extraction and cleaning, chunking, embedding generation, and vector database indexing. (2) The Online Query Pipeline, which handles query encoding, similarity search, optional reranking, prompt construction with context, and LLM generation with source grounding."
+  }
+ 
+]
